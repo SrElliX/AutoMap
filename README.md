@@ -21,7 +21,7 @@ O **Nmap Automatizado** visa simplificar o processo de utilização do Nmap, uma
 1. Clone o repositório para o seu ambiente local.
    ```bash
    git clone https://github.com/SrElliX/AutoMap.git
-   cd nmap-automatizado
+   cd AutoMap/
 2. Execute o script Python.
     python3 automap.py
 3. Siga as instruções interativas para inserir o IP ou a faixa de IP a ser varrida, bem como as opções de varredura desejadas.
