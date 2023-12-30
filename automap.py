@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 
 os.system('clear')
 
@@ -25,39 +26,53 @@ def run_nmap(ip, scan_options):
         command = ['nmap'] + scan_options + [ip]
 
         # Execute o comando nmap
-        result = subprocess.run(command, capture_output=True, text=True)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
-        # Imprima a saída do nmap
-        print(result.stdout)
+        # Imprime uma mensagem de carregamento antes do loop
+        print("Aguarde enquanto o Nmap está sendo executado...")
 
-        # Solicita ao usuário opções para filtrar a saída
-        print("\nOpções de filtragem:")
-        print("[1] Filtrar por serviços e portas")
-        print("[2] Filtrar por uma porta específica")
-        print("[S] Sair")
-        choice = input("Escolha uma opção: ")
+        # Use um loop para ler e imprimir as linhas à medida que são geradas
+        while True:
+            line = process.stdout.readline()
+            if not line:
+                break
 
-        if choice == '1':
-            # Filtrar por serviços e portas
-            services_ports = input("Digite os serviços/portas separados por espaço: ")
-            for line in result.stdout.splitlines():
-                if any(service_port in line for service_port in services_ports.split()):
-                    print(line)
+            # Imprime a linha sem pular uma linha para atualizar na mesma linha
+            sys.stdout.write(line)
+            sys.stdout.flush()
 
-        elif choice == '2':
-            # Filtrar por uma porta específica
-            specific_port = input("Digite a porta específica: ")
-            for line in result.stdout.splitlines():
-                if f"{specific_port}/" in line:
-                    print(line)
+        process.stdout.close()
+        process.wait()
 
-        elif choice.upper() == 'S':
-            # Sair do programa
-            print("Saindo do programa.")
-            exit()
+        while True:
+            # Solicita ao usuário opções para filtrar a saída
+            print("\nOpções de filtragem:")
+            print("[1] Filtrar por serviços e portas")
+            print("[2] Filtrar por uma porta específica")
+            print("[S] Sair")
+            choice = input("Escolha uma opção: ")
 
-        else:
-            print("Opção inválida.")
+            if choice == '1':
+                # Filtrar por serviços e portas
+                services_ports = input("Digite os serviços/portas separados por espaço: ")
+                for line in result.stdout.splitlines():
+                    if any(service_port in line for service_port in services_ports.split()):
+                        print(line)
+
+            elif choice == '2':
+                # Filtrar por uma porta específica
+                specific_port = input("Digite a porta específica: ")
+                for line in result.stdout.splitlines():
+                    if f"{specific_port}/" in line:
+                        print(line)
+
+            elif choice.upper() == 'S':
+                # Sair do programa
+                print("Saindo do programa.")
+                exit()
+
+            else:
+                print("Opção inválida.")
 
     except Exception as e:
         print(f"\nErro ao executar o nmap: {e}")
